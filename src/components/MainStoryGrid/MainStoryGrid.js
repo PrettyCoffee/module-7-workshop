@@ -12,6 +12,7 @@ import MainStory from '../MainStory';
 import SecondaryStory from '../SecondaryStory';
 import OpinionStory from '../OpinionStory';
 import Advertisement from '../Advertisement';
+import {COLORS} from "../../constants";
 
 const MainStoryGrid = () => {
   return (
@@ -66,6 +67,12 @@ const SecondaryStorySection = styled.section`
 const StoryList = styled.div`
   display: flex;
   flex-direction: column;
+  
+  > *:not(:last-of-type) {
+    padding-bottom: 1rem;
+    margin-bottom: 1rem;
+    border-bottom: 1px solid ${COLORS.gray["300"]};
+  }
 `;
 
 const OpinionSection = styled.section`

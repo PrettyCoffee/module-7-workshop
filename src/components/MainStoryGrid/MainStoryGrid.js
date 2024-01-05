@@ -1,5 +1,5 @@
 import React from 'react';
-import styled from 'styled-components/macro';
+import styled, { css } from 'styled-components/macro';
 
 import {
   MAIN_STORY,
@@ -12,7 +12,7 @@ import MainStory from '../MainStory';
 import SecondaryStory from '../SecondaryStory';
 import OpinionStory from '../OpinionStory';
 import Advertisement from '../Advertisement';
-import {COLORS} from "../../constants";
+import { COLORS, QUERIES } from "../../constants";
 
 const MainStoryGrid = () => {
   return (
@@ -22,20 +22,20 @@ const MainStoryGrid = () => {
       </MainStorySection>
 
       <SecondaryStorySection>
-        <StoryList>
+        <SecondaryStoryList>
           {SECONDARY_STORIES.map((story, index) => (
             <SecondaryStory key={story.id} {...story} />
           ))}
-        </StoryList>
+        </SecondaryStoryList>
       </SecondaryStorySection>
 
       <OpinionSection>
         <SectionTitle>Opinion</SectionTitle>
-        <StoryList>
+        <OpinionList>
           {OPINION_STORIES.map((story, index) => (
             <OpinionStory key={story.id} {...story} />
           ))}
-        </StoryList>
+        </OpinionList>
       </OpinionSection>
 
       <AdvertisementSection>
@@ -45,6 +45,19 @@ const MainStoryGrid = () => {
   );
 };
 
+const gridBorder = ({ side, offset, reset }) =>
+  reset
+    ? css`
+      border-${side}: none;
+      padding-${side}: 0;
+      margin-${side}: 0;
+    `
+    : css`
+      border-${side}: 1px solid ${COLORS.gray["300"]};
+      padding-${side}: ${offset};
+      margin-${side}: calc(-1 * ${offset});
+    `
+
 const Wrapper = styled.div`
   display: grid;
   grid-template-areas:
@@ -52,12 +65,31 @@ const Wrapper = styled.div`
     'secondary-stories'
     'opinion-stories'
     'advertisement';
-  gap: 48px;
+  gap: 3rem;
   margin-bottom: 48px;
+  
+  @media ${QUERIES.tabletAndUp} {
+    grid-template-areas:
+    'main-story secondary-stories'
+    'advertisement advertisement'
+    'opinion-stories opinion-stories';
+    grid-template-columns: 2fr 1fr;
+  }
+
+  @media ${QUERIES.laptopAndUp} {
+    grid-template-areas:
+    'main-story secondary-stories opinion-stories'
+    'main-story advertisement advertisement';
+    grid-template-columns: 2fr 1.5fr 1fr;
+  }
 `;
 
 const MainStorySection = styled.section`
   grid-area: main-story;
+
+  @media ${QUERIES.tabletAndUp} {
+    ${gridBorder({side: "right", offset: "1.5rem"})}
+  }
 `;
 
 const SecondaryStorySection = styled.section`
@@ -67,11 +99,29 @@ const SecondaryStorySection = styled.section`
 const StoryList = styled.div`
   display: flex;
   flex-direction: column;
+  gap: 2rem;
   
   > *:not(:last-of-type) {
-    padding-bottom: 1rem;
-    margin-bottom: 1rem;
-    border-bottom: 1px solid ${COLORS.gray["300"]};
+    ${gridBorder({ side: "bottom", offset: "1rem" })}
+  }
+`;
+
+const SecondaryStoryList = styled(StoryList)`
+  @media ${QUERIES.laptopAndUp} {
+    ${gridBorder({ side: "right", offset: "1.5rem" })}
+  }
+`;
+
+const OpinionList = styled(StoryList)`
+  @media ${QUERIES.tabletOnly} {
+    flex-direction: row;
+    > * {
+      flex: 1;
+    }
+    > *:not(:last-of-type) {
+      ${gridBorder({ side: "bottom", reset: true })}
+      ${gridBorder({ side: "right", offset: "1rem" })}
+    }
   }
 `;
 
@@ -81,6 +131,10 @@ const OpinionSection = styled.section`
 
 const AdvertisementSection = styled.section`
   grid-area: advertisement;
+
+  @media ${QUERIES.laptopAndUp} {
+    ${gridBorder({ side: "top", offset: "1.5rem" })}
+  }
 `;
 
 export default MainStoryGrid;
